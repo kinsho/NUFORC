@@ -73,6 +73,7 @@
 		require: false,
 		process: false,
 		d3: false,
-		Handlebars: false
+		Handlebars: false,
+		System: false
 	}
 }

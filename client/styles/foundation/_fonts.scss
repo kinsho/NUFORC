@@ -1,0 +1,163 @@
+/* ----------------------- IMPORTS ----------------------------- */
+
+@import 'colors';
+
+/*
+ * The custom font-families that the site will use are:
+ *
+ * Cardo
+ * Muli
+ * Playfair Display
+ *
+ */
+@import url(https://fonts.googleapis.com/css?family=Cardo:400,700,400italic|Muli:400,300,400italic,300italic|Playfair+Display:400,700);
+
+/* ----------------------- LOCAL CONSTANTS ----------------------------- */
+
+$FONTS:
+(
+	tinyFontSize: 12px,
+	smallFontSize: 16px,
+	regularFontSize: 18px,
+	regularPlusFontSize: 20px,
+	largeFontSize: 24px,
+	largePlusFontSize: 28px,
+	giganticFontSize: 36px,
+
+	mobileTinyFontSize: 10px,
+	mobileSmallFontSize: 12px,
+	mobileRegularFontSize: 16px,
+	mobileRegularPlusFontSize: 18px,
+	mobileLargeFontSize: 20px,
+	mobileLargePlusFontSize: 24px,
+	mobileGiganticFontSize: 28px
+);
+
+/* ----------------------- MIX-INS ----------------------------- */
+
+/*
+ * Mixin built to provide a convenient way to set basic font styles quickly
+ *
+ * @param $weight - the font weight
+ * @param $size - the font size
+ * @param $family - the font family
+ * @param $style - the font style
+ * @param $color - an optional parameter that allows one to specify a font color
+ *
+ * @author kinsho
+ */
+@mixin basicFontSettings($weight: 400, $size: map-get($FONTS, smallFontSize), $family: Cardo, $style: normal, $color: null)
+{
+	font:
+	{
+		weight: $weight;
+		size: $size;
+		family: $family, sans-serif;
+		style: $style;
+	}
+
+	@if ($color)
+	{
+		color: $color;
+	}
+}
+
+// Mixin reserved for header text
+@mixin headerSettings($size, $style, $weight: 700, $padding: 10px, $textAlign: center)
+{
+	@include basicFontSettings($weight: $weight, $size: $size, $family: Playfair Display);
+
+	padding:
+	{
+		top: $padding;
+		bottom: $padding;
+	}
+
+	text-align: $textAlign;
+	white-space: nowrap;
+
+	// No content clause needed here. The only hard-coded properties above should remain as is
+}
+
+/* ----------------------- PLACEHOLDERS ----------------------------- */
+
+/* --- Italicized and bold stylings --- */
+%italicizedFont
+{
+	font-style: italic;
+}
+
+%boldFont
+{
+	font-weight: 700;
+}
+
+/* --- Header stylings --- */
+%h2
+{
+	@include headerSettings($size: map-get($FONTS, giganticFontSize), $style: italic, $weight: 400, $padding: 20px, $textAlign: left);
+
+//	{map-get($MEDIA, 'mobile')}
+//	{
+//		@include headerSettings($size: map-get($FONTS, mobileGiganticFontSize), $style: italic, $weight: 400, $padding: 20px, $textAlign: left);
+//	}
+}
+
+%h3
+{
+	@include headerSettings($size: map-get($FONTS, giganticFontSize), $style: normal, $weight: 700, $padding: 10px, $textAlign: center)
+}
+
+/* --- Regular stylings --- */
+%regularText
+{
+	@include basicFontSettings($size: map-get($FONTS, regularPlusFontSize));
+}
+
+/* --- Form stylings --- */
+%formSectionHeaderText
+{
+	@include basicFontSettings($weight: 200, $size: map-get($FONTS, largeFontSize), $family: Muli);
+}
+
+%formRadioLabelText
+{
+	@include basicFontSettings($weight: 400, $size: map-get($FONTS, regularFontSize), $family: Playfair Display);
+}
+
+%formLabelText
+{
+	@include basicFontSettings($weight: 700, $size: map-get($FONTS, regularPlusFontSize), $family: Playfair Display);
+}
+
+/* --- Button stylings --- */
+%buttonText
+{
+	@include basicFontSettings($weight: 700, $size: map-get($FONTS, regularPlusFontSize), $family: Muli, $style: italic, $color: map-get($COLORS, whiteTheme));
+
+	text-shadow: 1px 1px map-get($COLORS, blackTheme);
+}
+
+/* --- Tooltip stylings --- */
+%tooltipText
+{
+	@include basicFontSettings($weight: 400, $size: map-get($FONTS, tinyFontSize), $family: Palatino Linotype, $color: map-get($COLORS, whiteTheme));
+}
+
+/* --- Table stylings --- */
+%tableTitle
+{
+	@include basicFontSettings($size: map-get($FONTS, regularPlusFontSize), $family: Muli, $style: normal, $weight: 400, $color: map-get($COLORS, whiteTheme));
+
+	text-shadow: 1px 1px map-get($COLORS, blackTheme);
+}
+
+%columnHeader
+{
+	@include basicFontSettings($size: map-get($FONTS, regularFontSize), $family: Muli);
+}
+
+%dataCell
+{
+	@include basicFontSettings($size: map-get($FONTS, regularFontSize));
+}

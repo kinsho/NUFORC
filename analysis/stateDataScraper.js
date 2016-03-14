@@ -9,7 +9,7 @@ global.NUFORC =
 
 var _Q = require('Q'),
 	scraper = global.NUFORC.require('analysis/baseScraper'),
-	mongo = global.NUFORC.require('data/databaseDriver');
+	mongo = global.NUFORC.require('DAO/utility/databaseDriver');
 
 // ----------------- ENUMS/CONSTANTS --------------------------
 

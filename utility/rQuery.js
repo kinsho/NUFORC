@@ -41,7 +41,7 @@ module.exports =
 	},
 
 	/**
-	 * Function that compiles all the key-value pairs of an object into an array of array
+	 * Function that compiles all the key-value pairs of an object into a two-dimensional array
 	 *
 	 * @param {Object} obj - the object whose key-value pairs will be copied into a two-dimensional array
 	 *
@@ -51,7 +51,7 @@ module.exports =
 	 */
 	findObjectEntries: function (obj)
 	{
-		var keys = Object.keys(obj || {}),
+		var keys = Object.keys(obj),
 			entries = [],
 			i;
 

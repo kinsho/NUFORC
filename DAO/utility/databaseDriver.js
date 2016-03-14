@@ -5,7 +5,8 @@
 // ----------------- EXTERNAL MODULES --------------------------
 
 var _Q = require('q'),
-	_mongodb = require('mongodb');
+	_mongodb = require('mongodb'),
+	config = global.OwlStakes.require('config/config');
 
 // ----------------- ENUMS/CONSTANTS --------------------------
 
@@ -16,7 +17,7 @@ var INSERT_ONE = 'insertOne',
 	DELETE_MANY = 'deleteMany',
 
 	// Database configuration
-	DATABASE_URL = 'mongodb://kinsho:NUFORC@localhost:27017/NUFORC';
+	DATABASE_URL = config.DATABASE_URL;
 
 // ----------------- PRIVATE VARIABLES --------------------------
 
@@ -56,21 +57,6 @@ module.exports =
 				throw(error);
 			}
 		}
-		else
-		{
-			try
-			{
-				// Re-open the instantiated MongoDB client
-				yield db.open();
-				console.log('Connected to Mongo!');
-			}
-			catch(error)
-			{
-				console.error('ERROR ---> databaseDriver.initialize');
-				console.error(error);
-				throw(error);
-			}
-		}
 	}),
 
 	/**
@@ -93,13 +79,14 @@ module.exports =
 	 *
 	 * @param {String} collectionName - the name of the collection from which to read data
 	 * @param {Object} [query] - the query to execute
+	 * @param {Object} [sortCriteria] - the instructions that will be used to sort the result set
 	 * @param {Object} [aggregationOptions] - the options which to use to preprocess whatever data is returned
 	 *
 	 * @returns {Array<Object>} - the set of processed records which satisfy the query
 	 *
 	 * @author kinsho
 	 */
-	read: function(collectionName, params, aggregationOptions)
+	read: function(collectionName, params, sortCriteria, aggregationOptions)
 	{
 		var collection,
 			completeQuery = [],
@@ -110,6 +97,7 @@ module.exports =
 
 		params = params || {};
 		aggregationOptions = aggregationOptions || {};
+		sortCriteria = sortCriteria || {};
 
 		// Join both the search terms and the processing options into one object that can be consumed by the
 		// Mongo driver
@@ -131,9 +119,17 @@ module.exports =
 			// Connect to the database and fetch the results
 			collection = db.collection(collectionName);
 
+			// Log the query about to be executed
+			console.log('About to scoop up records from ' + collectionName);
+			if ((completeQuery.length) || (Object.keys(params).length))
+			{
+				console.log('Records will be filtered with the following parameters');
+				console.log( (completeQuery.length ? completeQuery : params) );
+			}
+
 			if (keys.length)
 			{
-				results = collection.aggregate(completeQuery).toArray(function(err, results)
+				results = collection.aggregate(completeQuery).sort(sortCriteria).toArray(function(err, results)
 				{
 					if (err)
 					{
@@ -146,7 +142,7 @@ module.exports =
 			}
 			else
 			{
-				results = collection.find(params).toArray(function(err, results)
+				results = collection.find(params).sort(sortCriteria).toArray(function(err, results)
 				{
 					if (err)
 					{

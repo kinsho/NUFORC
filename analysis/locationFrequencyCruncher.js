@@ -8,7 +8,7 @@ global.NUFORC =
 // ----------------- EXTERNAL MODULES --------------------------
 
 var _Q = require('Q'),
-	mongo = global.NUFORC.require('data/databaseDriver'),
+	mongo = global.NUFORC.require('DAO/utility/databaseDriver'),
 	rQuery = global.NUFORC.require('utility/rQuery');
 
 // ----------------- ENUMS/CONSTANTS --------------------------
@@ -49,9 +49,6 @@ module.exports =
 			{
 				monthYear: { $lte: endDate, $gte: startDate }
 			});
-
-		// Close the database
-		mongo.closeDatabase();
 
 		for (i = data.length - 1; i >= 0; i--)
 		{
@@ -103,9 +100,6 @@ module.exports =
 
 		// Pull all relevant stats from the database
 		censusData = yield mongo.read(DATABASE_CENSUS_COLLECTION_NAME, {});
-
-		// Close the database
-		mongo.closeDatabase();
 
 		// Transform the census stats into a format that can be readily used for this method's purposes
 		for (i = censusData.length - 1; i >= 0; i--)

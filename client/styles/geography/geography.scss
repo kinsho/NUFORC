@@ -1,0 +1,459 @@
+/* ----------------------- IMPORTS ----------------------------- */
+
+@import '../foundation/animations';
+@import '../foundation/colors';
+@import '../foundation/fonts';
+
+/* ----------------------- PLACEHOLDERS ----------------------------- */
+
+// General styling for each of the two date selection blocks
+%dateBlock
+{
+	border:
+	{
+		style: double;
+		width: 5px;
+		color: map-get($COLORS, grayTheme);
+	}
+
+	padding: 20px;
+}
+
+/* ----------------------- STYLES ----------------------------- */
+
+#header
+{
+	@extend %h3;
+}
+
+#pageDescription, #serverError, #resultsContainer
+{
+	@extend %regularText;
+}
+
+#dateInputContainer
+{
+	text-align: center;
+
+	& > span
+	{
+		display: inline-block;
+		width: 45%;
+
+		@media only screen and (max-device-width: 480px)
+		{
+			width: 100%
+		}
+	}
+}
+
+#beginningDate
+{
+	@extend %dateBlock;
+
+	border-left: none;
+}
+
+#endingDate
+{
+	@extend %dateBlock;
+
+	border-right: none;
+}
+
+.labelHeader
+{
+	@extend %formSectionHeaderText;
+
+	width: 100%;
+	display: inline-block;
+
+	text-align: center;
+}
+
+.yearContainer
+{
+	position: relative;
+
+	width: 100%;
+	height: 40px;
+	display: inline-block;
+
+	@media only screen and (max-device-width: 480px)
+	{
+		margin-bottom: 10px;
+	}
+}
+
+#beginningYearContainer, #endingYearContainer
+{
+	@include shiftTransition($x: -50%, $y: -50%);
+
+	position: absolute;
+	left: 50%;
+	top: 50%;
+
+	width: auto;
+
+	& > span
+	{
+		@extend %formLabelText;
+
+		width: 60px;
+		display: inline-block;
+	}
+
+	i
+	{
+		@include transitionSettings($property: all, $duration: 0.2s);
+		@include scaleTransition($length: 1, $width: 1);
+
+		font-size: map-get($FONTS, largePlusFontSize);
+		color: map-get($COLORS, darkBlueTheme);
+
+		cursor: pointer;
+
+		position: absolute;
+		top: 20%;
+
+		&:hover
+		{
+			@include scaleTransition($length: 1.5, $width: 1.5);
+		}
+
+		&:first-of-type
+		{
+			left: -70px;
+		}
+
+		&:last-of-type
+		{
+			left: 120px;
+		}
+
+		&.disabledCaret
+		{
+			opacity: 0.2;
+			cursor: default;
+
+			&:hover
+			{
+				@include scaleTransition($length: 1, $width: 1);
+			}
+		}
+	}
+}
+
+#beginningMonth, #endingMonth
+{
+	input
+	{
+		display: none;
+	}
+
+	label
+	{
+		@extend %formRadioLabelText;
+		@include transitionSettings($property: background, $duration: 0.2s);
+
+		padding:
+		{
+			top: 5px;
+			bottom: 5px;
+		}
+
+		border:
+		{
+			style: solid;
+			width: 2px;
+			color: map-get($COLORS, darkGrayTheme);
+			radius: 10px;
+		}
+
+		margin: 10px;
+
+		width: 20%;
+		display: inline-block;
+
+		background: rgba(208, 208, 208, 0.2);
+		text-align: center;
+		cursor: pointer;
+	}
+
+	input:checked + label
+	{
+		@extend %boldFont;
+
+		background: rgba(208, 208, 208, 1);
+	}
+}
+
+#selectedDates
+{
+	display: inline-block;
+	width: 100%;
+
+	margin-top: 25px;
+
+	text-align: center;
+
+	& > span
+	{
+		@extend %formLabelText;
+
+		display: inline-block;
+		width: 150px;
+	}
+}
+
+#dateRangeDash
+{
+	margin:
+	{
+		left: 15px;
+		right: 15px;
+	}
+
+	border:
+	{
+		width: 1px;
+		style: solid;
+		radius: 10px;
+		color: map-get($COLORS, darkGrayTheme)
+	}
+
+	display: inline-block;
+	width: 50%;
+}
+
+.submitButtonRow
+{
+	display: inline-block;
+	width: 100%;
+
+	text-align: center;
+
+	& > span
+	{
+		width: 15%;
+		max-width: 200px;
+		height: 40px;
+
+		margin-top: 25px;
+		display: inline-block;
+
+		&[data-hint]:before, &[data-hint]:after
+		{
+			@extend %tooltipText;
+		}
+	}
+}
+
+#dateRangeSubmit
+{
+	@extend %buttonText;
+	@include transitionSettings($property: opacity, $duration: 0.2s);
+
+	border:
+	{
+		style: solid;
+		width: 2px;
+		radius: 10px;
+		color: map-get($COLORS, blackTheme);
+	}
+
+	width: 100%;
+	display: inline-block;
+
+	background-color: map-get($COLORS, darkBlueTheme);
+	cursor: pointer;
+	position: relative;
+
+	&:disabled
+	{
+		opacity: 0.3;
+
+		cursor: default;
+	}
+}
+
+#serverError, #resultsContainer
+{
+	@include transitionSettings($property: opacity, $duration: 0.2s);
+
+	margin-top: 10px;
+
+	padding: 10px;
+	text-align: center;
+	opacity: 0.0;
+
+	&.show
+	{
+		opacity: 1.0;
+	}
+}
+
+#rawDataTable
+{
+	margin-right: 10px;
+}
+
+#perCapitaTable
+{
+	margin-left: 10px;
+}
+
+#rawDataTable, #perCapitaTable
+{
+	border:
+	{
+		style: solid;
+		width: 2px;
+		color: map-get($COLORS, darkGrayTheme);
+		radius: 10px;
+		spacing: 0;
+	}
+
+	width: 30%;
+	display: inline-table;
+	table-layout: fixed;
+}
+
+thead
+{
+	display: block;
+}
+
+tbody
+{
+	display: block;
+
+	overflow-y: auto;
+	height: 300px;
+
+	& > tr:hover
+	{
+		background-color: map-get($COLORS, blueTheme);
+	}
+}
+
+tr
+{
+	display: block;
+}
+
+.tableRowOdd
+{
+	background-color: map-get($COLORS, lightBlueTheme);
+}
+
+.tableHeader > th
+{
+	@extend %tableTitle;
+
+	border:
+	{
+		style: solid;
+		width: 0px;
+		color: map-get($COLORS, darkGrayTheme);
+
+		top-right-radius: 5px;
+		top-left-radius: 5px;
+	}
+
+	text-align: center;
+	vertical-align: middle;
+
+	display: inline-block;
+	padding-top: 10px;
+	height: 50px;
+	width: 100%;
+
+	background-color: map-get($COLORS, darkGreenTheme);
+}
+
+.columnHeader > th
+{
+	@extend %columnHeader;
+	@include transitionSettings($property: all, $duration: 0.1s);
+
+	background-color: map-get($COLORS, lightGrayTheme);
+	vertical-align: middle;
+
+	display: table-cell;
+	padding-top: 5px;
+	height: 30px;
+
+	cursor: pointer;
+
+	&:active
+	{
+		background-color: map-get($COLORS, darkGrayTheme);
+	}
+
+	&:first-child
+	{
+		border-right:
+		{
+			style: solid;
+			width: 1px;
+			color: map-get($COLORS, darkGrayTheme);
+		}
+
+		width: 60%;
+	}
+
+	&:last-child
+	{
+		width: 200px;
+
+		&.hint--top::after
+		{
+			white-space: normal;
+			width: 200px;
+		}
+	}
+
+	& > .fa-question-circle
+	{
+		padding-left: 8px;
+		color: map-get($COLORS, darkerBlueTheme);
+	}
+
+	& > .fa-chevron-circle-down
+	{
+		@include transitionSettings($property: opacity, $duration: 0.2s);
+
+		padding-right: 8px;
+		color: map-get($COLORS, darkBlueTheme);
+		opacity: 0.0;
+
+		&.show
+		{
+			opacity: 1.0;
+		}
+	}
+}
+
+// Styling for the data cells
+td
+{
+	@extend %dataCell;
+
+	vertical-align: middle;
+
+	display: table-cell;
+
+	&:first-child
+	{
+		text-align: left;
+		padding-left: 10px;
+		width: 100%;
+	}
+
+	&:last-child
+	{
+		text-align: right;
+		padding-right: 10px;
+	}
+}

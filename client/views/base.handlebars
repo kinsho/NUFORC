@@ -1,0 +1,40 @@
+<html>
+	<head>
+		<meta charset="UTF-8" />
+        <!-- Forcing IE to adhere to standards here -->
+		<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+
+        <!-- Load all third-party stylesheets here --->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/hint.css/1.3.6/hint.min.css">
+
+        <!-- Load all the application-specific CSS files for this page -->
+        {{#cssFiles}}
+			<link rel="stylesheet" type="text/css" href='{{path}}'/>
+        {{/cssFiles }}
+	</head>
+	<body>
+
+        <!-- All page-specific HTML goes here -->
+		<div class='content'>
+            {{{content}}}
+		</div>
+
+        <!-- Load all the necessary third-party script files below -->
+
+        <!-- Load the bootloading scripts along with the base script that is responsible for instantiating all other
+            scripts relevant to the page -->
+        <script src="client/scripts/jspm_packages/system.js" ></script>
+		<script src="client/scripts/jspm_config.js"></script>
+
+		<script>
+			System.import("{{launchScript}}");
+		</script>
+
+        <!-- Data to be bootstrapped when the page loads -->
+        <script>
+            window.NUFORC = {{{initialData}}};
+        </script>
+
+	</body>
+</html>

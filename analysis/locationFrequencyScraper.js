@@ -10,7 +10,7 @@ global.NUFORC =
 var _Q = require('Q'),
 	_cheerio = require('cheerio'),
 	scraper = global.NUFORC.require('analysis/baseScraper'),
-	mongo = global.NUFORC.require('data/databaseDriver'),
+	mongo = global.NUFORC.require('DAO/utility/databaseDriver'),
 	rQuery = global.NUFORC.require('utility/rQuery');
 
 // ----------------- ENUMS/CONSTANTS --------------------------

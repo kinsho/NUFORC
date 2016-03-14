@@ -1,0 +1,187 @@
+<!--- Header ---->
+<div id='header'>
+    <span>NUFORC Incident Map</span>
+</div>
+
+<!--- Description ---->
+<div id='pageDescription'>
+
+    <p>
+		NUFORC is an organization dedicated to providing a platform that allows people from across the world to
+		report UFO incidents they have personally witnessed. As part of its reporting process, people from the United States
+		are required to report the state in which they observed a UFO incident.
+    </p>
+
+    <p>
+        This platform conducts very simple analytics using that geographic information to paint a picture of the frequency
+        of UFO incidents across the United States. Feel free to play around with the dates and map below.
+    </p>
+
+    <p>
+		Specify a time range in which you want to explore incidence data.
+    </p>
+</div>
+
+<!--- Date Selectors ---->
+<form id='dateSelectionForm'>
+
+    {{#if false}}
+        <div id='dateInputContainer'>
+
+            <!--- Beginning Date ---->
+            <span id='beginningDate'>
+
+                <div class='labelHeader'>
+                    <label>From</label>
+                </div>
+
+                <!--- Year Selector ---->
+                <div class='yearContainer'>
+                    <div id='beginningYearContainer'>
+                        <i class='fa fa-caret-left'></i>
+                        <span id='beginningYear'>{{startingYear}}</span>
+                        <i class='fa fa-caret-right'></i>
+                    </div>
+                </div>
+
+                <!---- Month Selector ---->
+                <div id='beginningMonth'>
+                    {{#each months}}
+                        {{#if @first}}
+                            <input type='radio' id='beginningMonth{{@index}}' name='fromMonth' value='{{@index}}' checked='checked'><label for='beginningMonth{{@index}}'>{{this}}</label>
+                        {{else}}
+                            <input type='radio' id='beginningMonth{{@index}}' name='fromMonth' value='{{@index}}'><label for='beginningMonth{{@index}}'>{{this}}</label>
+                        {{/if}}
+                    {{/each}}
+                </div>
+
+            </span>
+
+            <!--- Ending Date ---->
+            <span id='endingDate'>
+
+                <div class='labelHeader'>
+                    <label>To</label>
+                </div>
+
+                <!--- Year Selector ---->
+                <div class='yearContainer'>
+                    <div id='endingYearContainer'>
+                        <i class='fa fa-caret-left'></i>
+                        <span id='endingYear'>{{endingYear}}</span>
+                        <i class='fa fa-caret-right'></i>
+                    </div>
+                </div>
+
+                <!----- Month Selector --->
+                <div id='endingMonth'>
+                    {{#each months}}
+                        {{#if @first}}
+                            <input type='radio' id='endingMonth{{@index}}' name='toMonth' value='{{@index}}' checked='checked'><label for='endingMonth{{@index}}'>{{this}}</label>
+                        {{else}}
+                            <input type='radio' id='endingMonth{{@index}}' name='toMonth'value='{{@index}}'><label for='endingMonth{{@index}}'>{{this}}</label>
+                        {{/if}}
+                    {{/each}}
+                </div>
+
+            </span>
+
+        </div>
+    {{/if}}
+
+    <div id='dateInputAlternateContainer'>
+
+		<!--- Beginning Date ---->
+        <span id='beginningDate'>
+
+            <div class='labelHeader'>
+				<label>From</label>
+			</div>
+
+            <!---- Month Selector ---->
+            <div id='beginningMonth'>
+                <select id='beginningMonthSelector'>
+                    {{#each months}}
+                        {{#if @first}}
+                            <option id='beginningMonth{{@index}}' value='{{@index}}' selected='selected'>{{this}}</option>>
+                        {{else}}
+							<option id='beginningMonth{{@index}}' value='{{@index}}'>{{this}}</option>>
+                        {{/if}}
+                    {{/each}}
+                </select>
+			</div>
+
+            <!--- Year Selector ---->
+            <div class='yearContainer'>
+				<div id='beginningYearContainer'>
+					<i class='fa fa-caret-left'></i>
+					<span id='beginningYear'>{{startingYear}}</span>
+					<i class='fa fa-caret-right'></i>
+				</div>
+			</div>
+
+        </span>
+
+    </div>
+
+	<div id='selectedDates'>
+		<span class='selectedDate'></span>
+		<span id='dateRangeDash'></span>
+		<span class='selectedDate'></span>
+	</div>
+
+	<div class='submitButtonRow'>
+	    <span id='dateRangeHint' class='hint--right'>
+            <button id='dateRangeSubmit'>
+                Search
+            </button>
+        </span>
+	</div>
+
+    <div id='serverError'>
+        Something went wrong while we were trying to retrieve data. We apologize, but please come back later when we
+        will have resolved the problem.
+    </div>
+
+    <div id='resultsContainer'>
+
+		<!--- Raw Frequency Table ---->
+        <table id='rawDataTable'>
+            <thead>
+                <tr class='tableHeader'>
+                    <th colspan='2'>Number of Incidents by State</th>
+                </tr>
+                <tr class='columnHeader'>
+                    <th data-table-id='rawDataTable' data-column-index=0>
+                        <i class='fa fa-chevron-circle-down'></i>State
+                    </th>
+                    <th data-table-id='rawDataTable' data-column-index=1>
+						<i class='fa fa-chevron-circle-down'></i>Incidents
+                    </th>
+                </tr>
+            </thead>
+            <tbody><!-- Data will go here... --></tbody>
+        </table>
+
+		<!--- Inverse Per Capita Table ---->
+		<table id='perCapitaTable'>
+		    <thead>
+                <tr class='tableHeader'>
+                    <th colspan='2'>Incident / Population Ratios</th>
+                </tr>
+                <tr class='columnHeader'>
+					<th data-table-id='perCapitaTable' data-column-index=0>
+						<i class='fa fa-chevron-circle-down'></i>State
+					</th>
+                    <th data-table-id='perCapitaTable' data-column-index=1 class='hint--top' data-hint="The numbers below indicate the number of people it takes in a state (on average) before one of those people submits an incident report to NUFORC. These numbers should give you a better idea of the true frequency of incidents in a state relative to that state's population.">
+						<i class='fa fa-chevron-circle-down'></i>
+                        Ratio
+                        <i class='fa fa-question-circle'></i>
+                    </th>
+                </tr>
+            </thead>
+			<tbody><!-- Data will go here... --></tbody>
+		</table>
+
+    </div>
+</form>

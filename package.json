@@ -5,16 +5,27 @@
   "dependencies": {
     "app-root-path": "~1.0",
     "cheerio": "~0.19",
-    "mongodb": "~2.0",
     "q": "~2.0",
-    "handlebars": "~3.0",
-    "request": "~2.60",
-    "request-debug": "~0.2.0"
+    "kerberos": "~0.0",
+    "request": "~2.67",
+    "request-debug": "~0.2",
+    "handlebars": "~4.0",
+    "node-sass": "~3.4",
+    "mongodb": "~2.1",
+    "html-minifier": "~1.2"
   },
   "jspm": {
-    "directories": {},
-    "configFile": "jspm_config.js",
-    "dependencies": {},
+    "directories": {
+      "packages": "client/scripts/jspm_packages"
+    },
+    "configFile": "client/scripts/jspm_config.js",
+    "dependencies": {
+      "axios": "npm:axios@^0.8.1",
+      "es6-promise": "npm:es6-promise@^3.0.2",
+      "rivets": "github:mikeric/rivets@^0.8.1",
+      "select2": "github:select2/select2@^4.0.1",
+      "sightglass": "github:mikeric/sightglass@^0.2.4"
+    },
     "devDependencies": {
       "traceur": "github:jmcriffey/bower-traceur@0.0.88",
       "traceur-runtime": "github:jmcriffey/bower-traceur-runtime@0.0.88"
