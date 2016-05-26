@@ -4,10 +4,13 @@ System.config({
     "*": "*.js",
     "github:*": "client/scripts/jspm_packages/github/*.js",
     "npm:*": "client/scripts/jspm_packages/npm/*.js"
-  },
+  }
+});
+
+System.config({
   "meta": {
     "client/scripts/**/*.js": {
-      "scriptLoad" : true
+      "scriptLoad": true
     }
   }
 });
@@ -15,10 +18,13 @@ System.config({
 System.config({
   "map": {
     "axios": "npm:axios@0.8.1",
+    "d3": "github:mbostock/d3@3.5.16",
+    "d3-tip": "github:Caged/d3-tip@0.6.7",
     "es6-promise": "npm:es6-promise@3.0.2",
     "rivets": "github:mikeric/rivets@0.8.1",
     "select2": "github:select2/select2@4.0.1",
     "sightglass": "github:mikeric/sightglass@0.2.4",
+    "topojson": "github:mbostock/topojson@1.6.24",
     "traceur": "github:jmcriffey/bower-traceur@0.0.88",
     "traceur-runtime": "github:jmcriffey/bower-traceur-runtime@0.0.88",
     "github:jspm/nodelibs-assert@0.1.0": {

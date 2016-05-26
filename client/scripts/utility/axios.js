@@ -6,7 +6,6 @@
 
 import _axios from 'axios';
 import _promise from 'es6-promise';
-import config from 'config/config';
 
 // ----------------- PRIVATE MEMBERS --------------------------
 
@@ -46,7 +45,7 @@ var axiosModule =
 	 */
 	post: function(url, payload)
 	{
-		_axiosConnection.post(url, payload).then(function(response)
+		_axiosConnection.post(url, payload).then((response) =>
 		{
 			return response.data;
 		}).catch(_genericErrorLogger);
@@ -65,15 +64,15 @@ var axiosModule =
 	 */
 	get: function(url, params)
 	{
-		return new Promise(function(resolve, reject)
+		return new Promise((resolve, reject) =>
 		{
 			_axiosConnection.get(url,
 			{
 				params : params
-			}).then(function(response)
+			}).then((response) =>
 			{
 				resolve(response.data);
-			}).catch(function(response)
+			}).catch((response) =>
 			{
 				_genericErrorLogger(response);
 				reject('');
@@ -90,8 +89,7 @@ _promise.polyfill();
 // Configure axios by generating a new instance with custom configuration properties
 _axiosConnection = _axios.create(
 {
-//	baseURL : config.BASE_URL,
-	timeout : 1000
+	timeout : 20000
 });
 
 // ----------------- EXPORT ---------------------------

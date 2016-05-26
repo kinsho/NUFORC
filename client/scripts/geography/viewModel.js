@@ -9,26 +9,25 @@ import STATES from 'shared/constants/states';
 
 // ----------------- ENUM/CONSTANTS -----------------------------
 
-var BEGINNING_YEAR_ELEMENT = 'beginningYear',
-	ENDING_YEAR_ELEMENT = 'endingYear',
-	BEGINNING_YEAR_CONTAINER = 'beginningYearContainer',
-	ENDING_YEAR_CONTAINER = 'endingYearContainer',
-	DISABLED_CARET_CLASS = 'disabledCaret',
+var BEGINNING_YEAR_INPUT = 'beginningYearSelector',
+	ENDING_YEAR_INPUT = 'endingYearSelector',
+	BEGINNING_MONTH_INPUT = 'beginningMonthSelector',
+	ENDING_MONTH_INPUT = 'endingMonthSelector',
 
 	SELECTED_DATES_CONTAINER = 'selectedDates',
 	SELECTED_DATE_CLASS = 'selectedDate',
-	FROM_MONTH_RADIO_ELEMENTS = 'fromMonth',
-	TO_MONTH_RADIO_ELEMENTS = 'toMonth',
 
 	DATE_RANGE_SUBMIT_BUTTON = 'dateRangeSubmit',
 	DATE_RANGE_HINT = 'dateRangeHint',
 	SUBMIT_BUTTON_DISABLED_TOOLTIP_MESSAGE = 'You need to enter valid dates to search data!',
 	SERVER_ERROR_CONTAINER = 'serverError',
+	DATA_LOADER = 'baseLoaderOverlay',
 
 	RESULTS_CONTAINER = 'resultsContainer',
 	RAW_DATA_TABLE = 'rawDataTable',
 	PER_CAPITA_TABLE = 'perCapitaTable',
 	SORTING_ICON_CLASS = 'fa-chevron-circle-down',
+	MAP_DIAGRAM_CONTAINER = 'mapDiagramContainer',
 
 	VISIBILITY_CLASS = 'show',
 	ROW_ODD_CLASS = 'tableRowOdd';
@@ -49,26 +48,6 @@ function _updateSelectedDates()
 }
 
 /**
- * Function responsible for ensuring that the data model and the form in the view completely agree as to what month
- * is currently selected
- *
- * @author kinsho
- */
-function _updateSelectedMonths()
-{
-	// Strange conditions to check, but we want to verify that both properties referenced below have valid numeric
-	// values, which would mean that values of zeroes should satisfy the conditions below
-	if (Number.isInteger(viewModel.beginningMonth) && Number.isInteger(viewModel.endingMonth))
-	{
-		var fromMonthRadioElements = document.getElementsByName(FROM_MONTH_RADIO_ELEMENTS),
-			toMonthRadioElements = document.getElementsByName(TO_MONTH_RADIO_ELEMENTS);
-
-		fromMonthRadioElements[viewModel.beginningMonth].checked = true;
-		toMonthRadioElements[viewModel.endingMonth].checked = true;
-	}
-}
-
-/**
  * Function checks to see if the range of dates selected by the user are valid. If not, the submit button on the form
  * should be disabled.
  *
@@ -82,54 +61,6 @@ function _checkFormValidity()
 
 	// Only populate the tooltip attribute so that a message pops up only when the button is disabled
 	document.getElementById(DATE_RANGE_HINT).dataset.hint = (disabled ? SUBMIT_BUTTON_DISABLED_TOOLTIP_MESSAGE : '');
-}
-
-/**
- * Function responsible for toggling the visual look of the increment and decrement icons associated with
- * the year inputs
- *
- * @author kinsho
- */
-function _toggleYearScrollArrows()
-{
-	var beginningYearArrows = document.getElementById(BEGINNING_YEAR_CONTAINER).getElementsByTagName('i'),
-		endingYearArrows = document.getElementById(ENDING_YEAR_CONTAINER).getElementsByTagName('i');
-
-	if (viewModel.beginningYear === window.NUFORC.startingYear)
-	{
-		beginningYearArrows[0].classList.add(DISABLED_CARET_CLASS);
-	}
-	else
-	{
-		beginningYearArrows[0].classList.remove(DISABLED_CARET_CLASS);
-	}
-
-	if (viewModel.beginningYear === window.NUFORC.endingYear)
-	{
-		beginningYearArrows[1].classList.add(DISABLED_CARET_CLASS);
-	}
-	else
-	{
-		beginningYearArrows[1].classList.remove(DISABLED_CARET_CLASS);
-	}
-
-	if (viewModel.endingYear === window.NUFORC.startingYear)
-	{
-		endingYearArrows[0].classList.add(DISABLED_CARET_CLASS);
-	}
-	else
-	{
-		endingYearArrows[0].classList.remove(DISABLED_CARET_CLASS);
-	}
-
-	if (viewModel.endingYear === window.NUFORC.endingYear)
-	{
-		endingYearArrows[1].classList.add(DISABLED_CARET_CLASS);
-	}
-	else
-	{
-		endingYearArrows[1].classList.remove(DISABLED_CARET_CLASS);
-	}
 }
 
 /**
@@ -235,6 +166,23 @@ function _toggleSortingIcon(tableID, columnIndex)
 	}
 }
 
+/**
+ * Function responsible for removing all children from an element indicated by the passed ID
+ *
+ * @param {String} elementID - the ID of the element whose children need to be removed from the DOM tree
+ *
+ * @author kinsho
+ */
+function _removeNodeFromDOM(elementID)
+{
+	var node = document.getElementById(elementID);
+
+	while (node.firstChild)
+	{
+		node.removeChild(node.firstChild);
+	}
+}
+
 // ----------------- VIEW MODEL DEFINITION -----------------------------
 
 var viewModel = {};
@@ -245,20 +193,18 @@ Object.defineProperty(viewModel, 'beginningYear',
 	configurable: false,
 	enumerable: true,
 
-	get: function()
+	get: () =>
 	{
 		return this.__beginningYear;
 	},
 
-	set: function(value)
+	set: (value) =>
 	{
 		this.__beginningYear = value;
 
-		document.getElementById(BEGINNING_YEAR_ELEMENT).innerHTML = value;
+		document.getElementById(BEGINNING_YEAR_INPUT).value = value;
 
 		_checkFormValidity();
-		_updateSelectedDates();
-		_toggleYearScrollArrows();
 	}
 });
 
@@ -268,20 +214,18 @@ Object.defineProperty(viewModel, 'endingYear',
 	configurable: false,
 	enumerable: true,
 
-	get: function()
+	get: () =>
 	{
 		return this.__endingYear;
 	},
 
-	set: function(value)
+	set: (value) =>
 	{
 		this.__endingYear = value;
 
-		document.getElementById(ENDING_YEAR_ELEMENT).innerHTML = value;
+		document.getElementById(ENDING_YEAR_INPUT).value = value;
 
 		_checkFormValidity();
-		_updateSelectedDates();
-		_toggleYearScrollArrows();
 	}
 });
 
@@ -291,18 +235,18 @@ Object.defineProperty(viewModel, 'beginningMonth',
 	configurable: false,
 	enumerable: true,
 
-	get: function()
+	get: () =>
 	{
 		return this.__beginningMonth;
 	},
 
-	set: function(value)
+	set: (value) =>
 	{
 		this.__beginningMonth = value;
 
+		document.getElementById(BEGINNING_MONTH_INPUT).value = value;
+
 		_checkFormValidity();
-		_updateSelectedMonths();
-		_updateSelectedDates();
 	}
 });
 
@@ -312,18 +256,37 @@ Object.defineProperty(viewModel, 'endingMonth',
 	configurable: false,
 	enumerable: true,
 
-	get: function()
+	get: () =>
 	{
 		return this.__endingMonth;
 	},
 
-	set: function(value)
+	set: (value) =>
 	{
 		this.__endingMonth = value;
 
+		document.getElementById(ENDING_MONTH_INPUT).value = value;
+
 		_checkFormValidity();
-		_updateSelectedMonths();
-		_updateSelectedDates();
+	}
+});
+
+// Loader Visibility Flag
+Object.defineProperty(viewModel, 'showLoader',
+{
+	configurable: false,
+	enumerable: true,
+
+	get: () =>
+	{
+		return this.__showLoader;
+	},
+
+	set: (value) =>
+	{
+		this.__showLoader = value;
+
+		_showElement(DATA_LOADER, value);
 	}
 });
 
@@ -333,12 +296,12 @@ Object.defineProperty(viewModel, 'showServerError',
 	configurable: false,
 	enumerable: true,
 
-	get: function()
+	get: () =>
 	{
 		return this.__showServerError;
 	},
 
-	set: function(value)
+	set: (value) =>
 	{
 		this.__showServerError = value;
 
@@ -352,16 +315,25 @@ Object.defineProperty(viewModel, 'showResultsContainer',
 	configurable: false,
 	enumerable: true,
 
-	get: function()
+	get: () =>
 	{
 		return this.__showResultsContainer;
 	},
 
-	set: function(value)
+	set: (value) =>
 	{
 		this.__showResultsContainer = value;
 
 		_showElement(RESULTS_CONTAINER, value);
+
+		if (value)
+		{
+			_updateSelectedDates();
+		}
+		else
+		{
+			_removeNodeFromDOM(MAP_DIAGRAM_CONTAINER);
+		}
 	}
 });
 
@@ -371,12 +343,12 @@ Object.defineProperty(viewModel, 'incidentData',
 	configurable: false,
 	enumerable: true,
 
-	get: function()
+	get: () =>
 	{
 		return this.__incidentData;
 	},
 
-	set: function(value)
+	set: (value) =>
 	{
 		this.__incidentData = value;
 
@@ -390,12 +362,12 @@ Object.defineProperty(viewModel, 'perCapitaData',
 	configurable: false,
 	enumerable: true,
 
-	get: function()
+	get: () =>
 	{
 		return this.__perCapitaData;
 	},
 
-	set: function(value)
+	set: (value) =>
 	{
 		this.__perCapitaData = value;
 
@@ -409,12 +381,12 @@ Object.defineProperty(viewModel, 'sortIconIncidentTable',
 	configurable: false,
 	enumerable: true,
 
-	get: function()
+	get: () =>
 	{
 		return this.__sortIconIncidentTable;
 	},
 
-	set: function(value)
+	set: (value) =>
 	{
 		this.__sortIconIncidentTable = value;
 
@@ -428,12 +400,12 @@ Object.defineProperty(viewModel, 'sortIconPerCapitaTable',
 	configurable: false,
 	enumerable: true,
 
-	get: function()
+	get: () =>
 	{
 		return this.__sortIconPerCapitaTable;
 	},
 
-	set: function(value)
+	set: (value) =>
 	{
 		this.__sortIconPerCapitaTable = value;
 

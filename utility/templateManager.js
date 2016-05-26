@@ -18,6 +18,27 @@ var compiledTemplates = [],
 		collapseInlineTagWhitespace : true
 	};
 
+// ----------------- HELPERS --------------------------
+
+/**
+ * Handlebars helper function that allows us to generate blocks of HTML over a range of numbers
+ *
+ * @author kinsho
+ */
+_Handlebars.registerHelper('range', function (beginningNumber, endingNumber, block)
+{
+	var num = beginningNumber,
+		output = '';
+
+	while(num <= endingNumber)
+	{
+		output += block.fn(num);
+		num += 1;
+	}
+
+	return output;
+});
+
 // ----------------- MODULE DEFINITION --------------------------
 
 module.exports =

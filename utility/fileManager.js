@@ -281,7 +281,8 @@ module.exports =
 	{
 		if (filePath.endsWith(JS_EXTENSION) ||
 			filePath.endsWith(SCSS_EXTENSION) ||
-			filePath.endsWith(MAP_EXTENSION) )
+			filePath.endsWith(MAP_EXTENSION) ||
+			filePath.endsWith(JSON_EXTENSION) )
 		{
 			filePath = process.cwd() + filePath;
 		}

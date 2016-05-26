@@ -7,14 +7,15 @@
 import axios from 'client/scripts/utility/axios';
 import rqc from 'client/scripts/utility/rQueryClient';
 import vm from 'client/scripts/geography/viewModel';
+import mapGenerator from 'client/scripts/geography/mapDiagram';
 import STATES from 'shared/constants/states';
 
 // ----------------- ENUMS/CONSTANTS ---------------------------
 
-var BEGINNING_YEAR_INPUT = 'beginningYearContainer',
-	ENDING_YEAR_INPUT = 'endingYearContainer',
-	FROM_MONTH_RADIO_ELEMENTS = 'fromMonth',
-	TO_MONTH_RADIO_ELEMENTS = 'toMonth',
+var BEGINNING_YEAR_INPUT = 'beginningYearSelector',
+	ENDING_YEAR_INPUT = 'endingYearSelector',
+	BEGINNING_MONTH_INPUT = 'beginningMonthSelector',
+	ENDING_MONTH_INPUT = 'endingMonthSelector',
 
 	DATE_RANGE_SUBMIT_BUTTON = 'dateRangeSubmit',
 
@@ -24,77 +25,46 @@ var BEGINNING_YEAR_INPUT = 'beginningYearContainer',
 
 	GET_MAP_DATA_URL = 'geography/getFilteredMapData';
 
-// ----------------- PRIVATE FUNCTION ---------------------------
+// ----------------- PRIVATE FUNCTIONS ---------------------------
 
-	/**
-	  * Sorting function for the frequency columns of the data tables
-	  */
-var _sortFrequencyTableByNumber = function(a, b)
+/**
+  * Sorting function for the frequency columns of the data tables
+  */
+function _sortFrequencyTableByNumber(a, b)
+{
+	if (a[1] > b[1])
 	{
-		if (a[1] > b[1])
-		{
-			return 1;
-		}
+		return 1;
+	}
 
-		if (b[1] > a[1])
-		{
-			return -1;
-		}
-
-		return 0;
-	},
-
-	/**
-	 * Sorting function for the state columns of the data tables
-	 */
-	_sortFrequencyTableByState = function(a, b)
+	if (b[1] > a[1])
 	{
-		if (STATES[a[0]] > STATES[b[0]])
-		{
-			return 1;
-		}
+		return -1;
+	}
 
-		if (STATES[b[0]] > STATES[a[0]])
-		{
-			return -1;
-		}
+	return 0;
+}
 
-		return 0;
-	};
+/**
+ * Sorting function for the state columns of the data tables
+ */
+function _sortFrequencyTableByState(a, b)
+{
+	if (STATES[a[0]] > STATES[b[0]])
+	{
+		return 1;
+	}
+
+	if (STATES[b[0]] > STATES[a[0]])
+	{
+		return -1;
+	}
+
+	return 0;
+}
 
 // ----------------- LISTENERS ---------------------------
 
-function incrementBeginningYear()
-{
-	if (vm.beginningYear < window.NUFORC.endingYear)
-	{
-		vm.beginningYear += 1;
-	}
-}
-
-function decrementBeginningYear()
-{
-	if (vm.beginningYear > window.NUFORC.startingYear)
-	{
-		vm.beginningYear -= 1;
-	}
-}
-
-function incrementEndingYear()
-{
-	if (vm.endingYear < window.NUFORC.endingYear)
-	{
-		vm.endingYear += 1;
-	}
-}
-
-function decrementEndingYear()
-{
-	if (vm.endingYear > window.NUFORC.startingYear)
-	{
-		vm.endingYear -= 1;
-	}
-}
 
 function beginningMonthLinker(event)
 {
@@ -104,6 +74,16 @@ function beginningMonthLinker(event)
 function endingMonthLinker(event)
 {
 	vm.endingMonth = event.currentTarget.value;
+}
+
+function beginningYearLinker(event)
+{
+	vm.beginningYear = event.currentTarget.value;
+}
+
+function endingYearLinker(event)
+{
+	vm.endingYear = event.currentTarget.value;
 }
 
 /**
@@ -129,18 +109,29 @@ function submitForm(event)
 		endingYear : vm.endingYear
 	};
 
-	axios.get(GET_MAP_DATA_URL, data).then(function(response)
+	// Make any information returned from a prior server call invisible and show the loading sequence instead
+	vm.showServerError = false;
+	vm.showResultsContainer = false;
+	vm.showLoader = true;
+
+	axios.get(GET_MAP_DATA_URL, data).then((response) =>
 	{
 		vm.incidentData = response.rawData;
 		vm.perCapitaData = response.perCapitaData;
 
-		vm.showServerError = false;
-		vm.showResultsContainer = !!(response.rawData.length);
+		vm.showLoader = false;
+		vm.showResultsContainer = true;
 
+		// Set the sort icons on the columns for which the tables are sorted by default
 		vm.sortIconIncidentTable = 1;
 		vm.sortIconPerCapitaTable = 1;
-	}, function()
+
+		// Generate the map
+		mapGenerator.generateMap(vm.perCapitaData);
+
+	}, () =>
 	{
+		vm.showLoader = false;
 		vm.showServerError = true;
 	});
 }
@@ -184,31 +175,21 @@ function sortColumn(event)
 
 // ----------------- LINKER INITIALIZATION -----------------------------
 
-var fromMonthRadioElements = document.getElementsByName(FROM_MONTH_RADIO_ELEMENTS),
-	toMonthRadioElements = document.getElementsByName(TO_MONTH_RADIO_ELEMENTS),
-	columnHeaderGroups = document.getElementsByClassName(COLUMN_HEADER_CLASS),
+var columnHeaderGroups = document.getElementsByClassName(COLUMN_HEADER_CLASS),
 	columnHeaders,
 	i, j;
 
-// All the month radio buttons must be hooked to a linker function in order to properly capture the value of
-// whatever months the user selects
-for (i = fromMonthRadioElements.length - 1; i >= 0; i--)
-{
-	fromMonthRadioElements[i].addEventListener('click', beginningMonthLinker);
-	toMonthRadioElements[i].addEventListener('click', endingMonthLinker);
-}
+// Setter for the beginning year
+document.getElementById(BEGINNING_YEAR_INPUT).addEventListener('change', beginningYearLinker);
 
-// Decrement icon for the beginning year
-document.getElementById(BEGINNING_YEAR_INPUT).getElementsByTagName('i')[0].addEventListener('click', decrementBeginningYear);
+// Setter for the ending year
+document.getElementById(ENDING_YEAR_INPUT).addEventListener('change', endingYearLinker);
 
-// Increment icon for the beginning year
-document.getElementById(BEGINNING_YEAR_INPUT).getElementsByTagName('i')[1].addEventListener('click', incrementBeginningYear);
+// Setter for the beginning month
+document.getElementById(BEGINNING_MONTH_INPUT).addEventListener('change', beginningMonthLinker);
 
-// Decrement icon for the ending year
-document.getElementById(ENDING_YEAR_INPUT).getElementsByTagName('i')[0].addEventListener('click', decrementEndingYear);
-
-// Increment icon for the ending year
-document.getElementById(ENDING_YEAR_INPUT).getElementsByTagName('i')[1].addEventListener('click', incrementEndingYear);
+// Setter for the ending month
+document.getElementById(ENDING_MONTH_INPUT).addEventListener('change', endingMonthLinker);
 
 // Date range form submit
 document.getElementById(DATE_RANGE_SUBMIT_BUTTON).addEventListener('click', submitForm);
@@ -232,7 +213,12 @@ vm.beginningMonth = 0;
 vm.endingMonth = 0;
 vm.showResultsContainer = false;
 vm.showServerError = false;
+vm.showLoader = false;
 vm.incidentData = [];
 vm.perCapitaData = [];
 vm.sortIconIncidentTable = 1;
 vm.sortIconPerCapitaTable = 1;
+
+// ----------------- PAGE INITIALIZATION -----------------------------
+
+window.scrollTo(0, 0);

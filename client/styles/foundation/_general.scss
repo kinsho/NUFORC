@@ -1,0 +1,27 @@
+/* ----------------------- GENERAL STYLES ----------------------------- */
+
+.content
+{
+	width: 100%;
+	overflow-x: hidden;
+}
+
+.separator
+{
+	width: 100%;
+	display: block;
+
+	margin:
+	{
+		top: 40px;
+		bottom: 40px;
+	}
+
+	border:
+	{
+		radius: 20px;
+		width: 1px;
+		style: solid;
+		color: map-get($COLORS, lightGrayTheme);
+	}
+}

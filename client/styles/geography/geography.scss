@@ -3,6 +3,9 @@
 @import '../foundation/animations';
 @import '../foundation/colors';
 @import '../foundation/fonts';
+@import '../foundation/loader';
+@import '../foundation/general';
+@import '../foundation/d3';
 
 /* ----------------------- PLACEHOLDERS ----------------------------- */
 
@@ -17,6 +20,11 @@
 	}
 
 	padding: 20px;
+
+	@media only screen and (max-device-width: 480px)
+	{
+		border-style: solid;
+	}
 }
 
 /* ----------------------- STYLES ----------------------------- */
@@ -29,6 +37,11 @@
 #pageDescription, #serverError, #resultsContainer
 {
 	@extend %regularText;
+
+	width: 90%;
+
+	margin-left: auto;
+	margin-right: auto;
 }
 
 #dateInputContainer
@@ -40,9 +53,22 @@
 		display: inline-block;
 		width: 45%;
 
-		@media only screen and (max-device-width: 480px)
+		@media only screen and (max-device-width: 1024px)
 		{
-			width: 100%
+			width: auto;
+			display: block;
+		}
+	}
+
+	select
+	{
+		@extend %formSelectText;
+
+		padding-left: 10px;
+
+		& > option
+		{
+			padding-left: 10px;
 		}
 	}
 }
@@ -52,6 +78,12 @@
 	@extend %dateBlock;
 
 	border-left: none;
+
+	@media only screen and (max-device-width: 1024px)
+	{
+		border-right: none;
+		border-bottom-width: 2.5px;
+	}
 }
 
 #endingDate
@@ -59,6 +91,12 @@
 	@extend %dateBlock;
 
 	border-right: none;
+
+	@media only screen and (max-device-width: 1024px)
+	{
+		border-left: none;
+		border-top-width: 2.5px;
+	}
 }
 
 .labelHeader
@@ -71,131 +109,61 @@
 	text-align: center;
 }
 
-.yearContainer
+#beginningDateSelectorContainer, #endingDateSelectorContainer
 {
-	position: relative;
-
-	width: 100%;
-	height: 40px;
-	display: inline-block;
-
-	@media only screen and (max-device-width: 480px)
-	{
-		margin-bottom: 10px;
-	}
+	margin-top: 6px;
 }
 
-#beginningYearContainer, #endingYearContainer
+#beginningMonthSelector, #endingMonthSelector
 {
-	@include shiftTransition($x: -50%, $y: -50%);
+	width: 60%;
+	margin-right: 8px;
+}
 
-	position: absolute;
-	left: 50%;
-	top: 50%;
+#beginningYearSelector, #endingYearSelector
+{
+	width: 30%;
+	margin-left: 8px;
+}
 
-	width: auto;
+.submitButtonRow
+{
+	display: inline-block;
+	width: 100%;
+
+	text-align: center;
 
 	& > span
 	{
-		@extend %formLabelText;
+		width: 200px;
+		height: 40px;
 
-		width: 60px;
-		display: inline-block;
-	}
-
-	i
-	{
-		@include transitionSettings($property: all, $duration: 0.2s);
-		@include scaleTransition($length: 1, $width: 1);
-
-		font-size: map-get($FONTS, largePlusFontSize);
-		color: map-get($COLORS, darkBlueTheme);
-
-		cursor: pointer;
-
-		position: absolute;
-		top: 20%;
-
-		&:hover
-		{
-			@include scaleTransition($length: 1.5, $width: 1.5);
-		}
-
-		&:first-of-type
-		{
-			left: -70px;
-		}
-
-		&:last-of-type
-		{
-			left: 120px;
-		}
-
-		&.disabledCaret
-		{
-			opacity: 0.2;
-			cursor: default;
-
-			&:hover
-			{
-				@include scaleTransition($length: 1, $width: 1);
-			}
-		}
-	}
-}
-
-#beginningMonth, #endingMonth
-{
-	input
-	{
-		display: none;
-	}
-
-	label
-	{
-		@extend %formRadioLabelText;
-		@include transitionSettings($property: background, $duration: 0.2s);
-
-		padding:
-		{
-			top: 5px;
-			bottom: 5px;
-		}
-
-		border:
-		{
-			style: solid;
-			width: 2px;
-			color: map-get($COLORS, darkGrayTheme);
-			radius: 10px;
-		}
-
-		margin: 10px;
-
-		width: 20%;
+		margin-top: 25px;
 		display: inline-block;
 
-		background: rgba(208, 208, 208, 0.2);
-		text-align: center;
-		cursor: pointer;
-	}
-
-	input:checked + label
-	{
-		@extend %boldFont;
-
-		background: rgba(208, 208, 208, 1);
+		&[data-hint]:before, &[data-hint]:after
+		{
+			@extend %tooltipText;
+		}
 	}
 }
 
 #selectedDates
 {
-	display: inline-block;
-	width: 100%;
+	margin:
+	{
+		bottom: 25px;
+	}
 
-	margin-top: 25px;
+	display: block;
+	width: auto;
 
 	text-align: center;
+
+	@media only screen and (max-device-width: 1024px)
+	{
+		display: none;
+	}
 
 	& > span
 	{
@@ -223,30 +191,7 @@
 	}
 
 	display: inline-block;
-	width: 50%;
-}
-
-.submitButtonRow
-{
-	display: inline-block;
-	width: 100%;
-
-	text-align: center;
-
-	& > span
-	{
-		width: 15%;
-		max-width: 200px;
-		height: 40px;
-
-		margin-top: 25px;
-		display: inline-block;
-
-		&[data-hint]:before, &[data-hint]:after
-		{
-			@extend %tooltipText;
-		}
-	}
+	width: 300px;
 }
 
 #dateRangeSubmit
@@ -277,14 +222,14 @@
 	}
 }
 
-#serverError, #resultsContainer
+#resultsContainer
 {
 	@include transitionSettings($property: opacity, $duration: 0.2s);
 
 	margin-top: 10px;
-
 	padding: 10px;
 	text-align: center;
+
 	opacity: 0.0;
 
 	&.show
@@ -293,14 +238,48 @@
 	}
 }
 
+#serverError
+{
+	@include transitionSettings($property: opacity, $duration: 0.2s);
+
+	position: relative;
+	margin-top: 20px;
+	width: 250px;
+
+	opacity: 0.0;
+
+	&.show
+	{
+		opacity: 1.0;
+	}
+
+	& > span
+	{
+		width: 250px;
+		height: 100px;
+
+		position: absolute;
+	}
+}
+
 #rawDataTable
 {
-	margin-right: 10px;
+	margin-right: 40px;
+
+	@media only screen and (max-device-width: 1024px)
+	{
+		margin-right: 0px;
+	}
 }
 
 #perCapitaTable
 {
-	margin-left: 10px;
+	margin-left: 40px;
+
+	@media only screen and (max-device-width: 1024px)
+	{
+		margin-left: 0px;
+	}
 }
 
 #rawDataTable, #perCapitaTable
@@ -317,6 +296,28 @@
 	width: 30%;
 	display: inline-table;
 	table-layout: fixed;
+
+	@media only screen and (max-device-width: 727px)
+	{
+		width: auto;
+
+		margin:
+		{
+			top: 15px;
+			bottom: 15px;
+		}
+	}
+	@media only screen and (max-device-width: 1024px) and (orientation: portrait)
+	{
+		width: auto;
+
+		margin:
+		{
+			top: 15px;
+			bottom: 15px;
+		}
+	}
+
 }
 
 thead
@@ -330,6 +331,12 @@ tbody
 
 	overflow-y: auto;
 	height: 300px;
+
+	@media only screen and (max-device-width: 727px)
+	{
+		overflow-y: visible;
+		height: auto;
+	}
 
 	& > tr:hover
 	{
@@ -405,7 +412,7 @@ tr
 
 	&:last-child
 	{
-		width: 200px;
+		width: 1000px;
 
 		&.hint--top::after
 		{
@@ -448,12 +455,91 @@ td
 	{
 		text-align: left;
 		padding-left: 10px;
-		width: 100%;
+		width: 60%;
+
+		@media only screen and (max-device-width: 1024px) and (orientation: landscape)
+		{
+			text-align: center;
+		}
 	}
 
 	&:last-child
 	{
 		text-align: right;
 		padding-right: 10px;
+		width: 1000px;
+
+		@media only screen and (max-device-width: 1024px) and (orientation: landscape)
+		{
+			text-align: center;
+		}
+	}
+}
+
+#mapDiagramSubtext
+{
+	@extend %regularText;
+
+	margin:
+	{
+		top: 35px;
+		bottom: 10px;
+	}
+
+	text-align: center;
+}
+
+// Basic styling for the maps
+#mapDiagramContainer
+{
+	text-align: center;
+}
+
+// Styling for the states in the D3 map
+.stateBoundaryInterior
+{
+	stroke: map-get($COLORS, blackTheme);
+	stroke-width: 0.5;
+	fill: none;
+}
+
+// Styling for the map metadata container
+#mobileStateDataContainer, #desktopStateDataContainer
+{
+	margin:
+	{
+		top: 30px;
+		bottom: 10px;
+	}
+
+	padding: 10px;
+
+	text-align: center;
+
+	width: 90%;
+	display: none;
+}
+
+#mobileStateDataContainer
+{
+	border:
+	{
+		style: solid;
+		width: 1px;
+		radius: 10px;
+		color: map-get($COLORS, grayTheme);
+	}
+
+	@media only screen and (max-device-width: 1024px)
+	{
+		display: block;
+	}
+}
+
+#desktopStateDataContainer
+{
+	@media only screen and (min-device-width: 1025px)
+	{
+		display: block;
 	}
 }

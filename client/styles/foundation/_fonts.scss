@@ -74,7 +74,6 @@ $FONTS:
 	}
 
 	text-align: $textAlign;
-	white-space: nowrap;
 
 	// No content clause needed here. The only hard-coded properties above should remain as is
 }
@@ -114,6 +113,20 @@ $FONTS:
 	@include basicFontSettings($size: map-get($FONTS, regularPlusFontSize));
 }
 
+%loaderText
+{
+	@include basicFontSettings($weight: 700, $size: map-get($FONTS, giganticFontSize), $family: Helvetica, $color: map-get($COLORS, darkBlueTheme));
+
+
+	@media only screen and (max-device-width: 727px)
+	{
+		font-size: map-get($FONTS, mobileLargePlusFontSize);
+	}
+
+	letter-spacing: 0.2em;
+	text-transform: uppercase;
+}
+
 /* --- Form stylings --- */
 %formSectionHeaderText
 {
@@ -123,6 +136,11 @@ $FONTS:
 %formRadioLabelText
 {
 	@include basicFontSettings($weight: 400, $size: map-get($FONTS, regularFontSize), $family: Playfair Display);
+}
+
+%formSelectText
+{
+	@include basicFontSettings($weight: 400, $size: map-get($FONTS, regularPlusFontSize), $family: Playfair Display);
 }
 
 %formLabelText

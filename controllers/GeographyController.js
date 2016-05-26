@@ -5,6 +5,7 @@
 // ----------------- EXTERNAL MODULES --------------------------
 
 var _Q = require('q'),
+	_sleep = require('sleep'),
 	controllerHelper = global.OwlStakes.require('controllers/utility/ControllerHelper'),
 	templateManager = global.OwlStakes.require('utility/templateManager'),
 	DAO = global.OwlStakes.require('DAO/geography/GeographyDAO'),
@@ -63,6 +64,9 @@ module.exports =
 	getFilteredMapData: _Q.async(function* (params)
 	{
 		console.log('Invoking the getFilteredMapData function from the GeographyController...');
+
+//		Below line is used to test the loader logic
+//		_sleep.sleep(4);
 
 		var startDate = new Date(params.beginningYear, params.beginningMonth),
 			endDate = new Date(params.endingYear, params.endingMonth),

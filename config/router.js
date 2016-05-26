@@ -28,7 +28,8 @@ var ROUTE_JSON_DIRECTORY = 'config/',
 		'.svg',
 		'.js',
 		'.ico',
-		'.map'
+		'.map',
+		'.json'
 	],
 
 	CONTENT_TYPE_HEADERS =
@@ -39,7 +40,8 @@ var ROUTE_JSON_DIRECTORY = 'config/',
 		'png' : 'image/png',
 		'svg' : 'image/svg+xml',
 		'js' : 'application/javascript',
-		'map' : 'application/javascript'
+		'map' : 'application/javascript',
+		'json' : 'application/json'
 	};
 
 // ----------------- PRIVATE VARIABLES -----------------------------

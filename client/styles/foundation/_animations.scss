@@ -61,16 +61,17 @@
  * @param [$timing] - the pace at which the animation will progress
  * @param [$delay] - the amount of time to wait before the animation begins
  * @param [$iterations] - the number of times which to execute the animation
+ * @param [$direction] - the direction in which the animation should play over time
  *
  * @author kinsho
  */
-@mixin animationSettings($keyframeSet: false, $duration: false, $timing: false, $delay: false, $iterations: 1)
+@mixin animationSettings($keyframeSet: false, $duration: false, $timing: false, $delay: false, $iterations: 1, $direction: normal)
 {
 	@if ($keyframeSet)
 	{
 		animation-name: $keyframeSet;
 		-webkit-animation-name: $keyframeSet;
-		-mozilla-animation-name: $keyframeSet;
+		-moz-animation-name: $keyframeSet;
 		-ms-animation-name: $keyframeSet;
 		-o-animation-name: $keyframeSet;
 	}
@@ -97,14 +98,23 @@
 	{
 		animation-delay: $delay;
 		-webkit-animation-delay: $delay;
-		-mozilla-animation-delay: $delay;
+		-moz-animation-delay: $delay;
 		-ms-animation-delay: $delay;
 		-o-animation-delay: $delay;
 	}
 
+	@if ($direction)
+	{
+		animation-direction: $direction;
+		-webkit-animation-direction: $direction;
+		-moz-animation-direction: $direction;
+		-ms-animation-direction: $direction;
+		-o-animation-direction: $direction;
+	}
+
 	animation-iteration-count: $iterations;
 	-webkit-animation-iteration-count: $iterations;
-	-mozilla-animation-iteration-count: $iterations;
+	-moz-animation-iteration-count: $iterations;
 	-ms-animation-iteration-count: $iterations;
 	-o-animation-iteration-count: $iterations;
 }

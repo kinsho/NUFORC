@@ -20,168 +20,145 @@
     <p>
 		Specify a time range in which you want to explore incidence data.
     </p>
+
 </div>
 
 <!--- Date Selectors ---->
 <form id='dateSelectionForm'>
 
-    {{#if false}}
-        <div id='dateInputContainer'>
-
-            <!--- Beginning Date ---->
-            <span id='beginningDate'>
-
-                <div class='labelHeader'>
-                    <label>From</label>
-                </div>
-
-                <!--- Year Selector ---->
-                <div class='yearContainer'>
-                    <div id='beginningYearContainer'>
-                        <i class='fa fa-caret-left'></i>
-                        <span id='beginningYear'>{{startingYear}}</span>
-                        <i class='fa fa-caret-right'></i>
-                    </div>
-                </div>
-
-                <!---- Month Selector ---->
-                <div id='beginningMonth'>
-                    {{#each months}}
-                        {{#if @first}}
-                            <input type='radio' id='beginningMonth{{@index}}' name='fromMonth' value='{{@index}}' checked='checked'><label for='beginningMonth{{@index}}'>{{this}}</label>
-                        {{else}}
-                            <input type='radio' id='beginningMonth{{@index}}' name='fromMonth' value='{{@index}}'><label for='beginningMonth{{@index}}'>{{this}}</label>
-                        {{/if}}
-                    {{/each}}
-                </div>
-
-            </span>
-
-            <!--- Ending Date ---->
-            <span id='endingDate'>
-
-                <div class='labelHeader'>
-                    <label>To</label>
-                </div>
-
-                <!--- Year Selector ---->
-                <div class='yearContainer'>
-                    <div id='endingYearContainer'>
-                        <i class='fa fa-caret-left'></i>
-                        <span id='endingYear'>{{endingYear}}</span>
-                        <i class='fa fa-caret-right'></i>
-                    </div>
-                </div>
-
-                <!----- Month Selector --->
-                <div id='endingMonth'>
-                    {{#each months}}
-                        {{#if @first}}
-                            <input type='radio' id='endingMonth{{@index}}' name='toMonth' value='{{@index}}' checked='checked'><label for='endingMonth{{@index}}'>{{this}}</label>
-                        {{else}}
-                            <input type='radio' id='endingMonth{{@index}}' name='toMonth'value='{{@index}}'><label for='endingMonth{{@index}}'>{{this}}</label>
-                        {{/if}}
-                    {{/each}}
-                </div>
-
-            </span>
-
-        </div>
-    {{/if}}
-
-    <div id='dateInputAlternateContainer'>
+    <div id='dateInputContainer'>
 
 		<!--- Beginning Date ---->
         <span id='beginningDate'>
 
             <div class='labelHeader'>
-				<label>From</label>
+				<span>From</span>
 			</div>
 
-            <!---- Month Selector ---->
-            <div id='beginningMonth'>
+            <div id='beginningDateSelectorContainer'>
+
+                <!---- Month Selector ---->
                 <select id='beginningMonthSelector'>
+                    <option value='' disabled>Select a month...</option>
                     {{#each months}}
-                        {{#if @first}}
-                            <option id='beginningMonth{{@index}}' value='{{@index}}' selected='selected'>{{this}}</option>>
-                        {{else}}
-							<option id='beginningMonth{{@index}}' value='{{@index}}'>{{this}}</option>>
-                        {{/if}}
+                        <option id='beginningMonth{{@index}}' value='{{@index}}'>{{this}}</option>>
                     {{/each}}
                 </select>
+
+                <!--- Year Selector ---->
+                <select id='beginningYearSelector'>
+					<option value='' disabled>Select a year...</option>
+                    {{#range startingYear endingYear}}
+                        <option id='beginningYear{{@index}}' value='{{this}}'>{{this}}</option>>
+                    {{/range}}
+                </select>
+
+            </div>
+
+        </span>
+
+        <span id='endingDate'>
+
+            <div class='labelHeader'>
+				<span>To</span>
 			</div>
 
-            <!--- Year Selector ---->
-            <div class='yearContainer'>
-				<div id='beginningYearContainer'>
-					<i class='fa fa-caret-left'></i>
-					<span id='beginningYear'>{{startingYear}}</span>
-					<i class='fa fa-caret-right'></i>
-				</div>
+            <div id='endingDateSelectorContainer'>
+
+				<!---- Month Selector ---->
+				<select id='endingMonthSelector'>
+					<option value='' disabled>Select a month...</option>
+                    {{#each months}}
+                        <option id='endingMonth{{@index}}' value='{{@index}}'>{{this}}</option>>
+                    {{/each}}
+				</select>
+
+				<!--- Year Selector ---->
+				<select id='endingYearSelector'>
+					<option value='' disabled>Select a year...</option>
+                    {{#range startingYear endingYear}}
+                        <option id='endingYear{{@index}}' value='{{this}}' selected='selected'>{{this}}</option>>
+                    {{/range}}
+				</select>
+
 			</div>
 
         </span>
 
     </div>
 
-	<div id='selectedDates'>
-		<span class='selectedDate'></span>
-		<span id='dateRangeDash'></span>
-		<span class='selectedDate'></span>
-	</div>
-
+	<!--- Submission Button ---->
 	<div class='submitButtonRow'>
 	    <span id='dateRangeHint' class='hint--right'>
-            <button id='dateRangeSubmit'>
-                Search
-            </button>
+            <button type='button' id='dateRangeSubmit'>
+				Search
+			</button>
         </span>
 	</div>
 
-    <div id='serverError'>
+</form>
+
+<div id='serverError'>
+    <span>
         Something went wrong while we were trying to retrieve data. We apologize, but please come back later when we
         will have resolved the problem.
+    </span>
+</div>
+
+<div id='resultsContainer'>
+
+    <!--- Selected Dates ----->
+    <div id='selectedDates'>
+        <span class='selectedDate'></span>
+        <span id='dateRangeDash'></span>
+        <span class='selectedDate'></span>
     </div>
 
-    <div id='resultsContainer'>
+    <!--- Raw Frequency Table ---->
+    <table id='rawDataTable'>
+        <thead>
+            <tr class='tableHeader'>
+                <th colspan='2'>Number of Incidents by State</th>
+            </tr>
+            <tr class='columnHeader'>
+                <th data-table-id='rawDataTable' data-column-index=0>
+                    <i class='fa fa-chevron-circle-down'></i>State
+                </th>
+                <th data-table-id='rawDataTable' data-column-index=1>
+                    <i class='fa fa-chevron-circle-down'></i>Incidents
+                </th>
+            </tr>
+        </thead>
+        <tbody><!-- Data will go here... --></tbody>
+    </table>
 
-		<!--- Raw Frequency Table ---->
-        <table id='rawDataTable'>
-            <thead>
-                <tr class='tableHeader'>
-                    <th colspan='2'>Number of Incidents by State</th>
-                </tr>
-                <tr class='columnHeader'>
-                    <th data-table-id='rawDataTable' data-column-index=0>
-                        <i class='fa fa-chevron-circle-down'></i>State
-                    </th>
-                    <th data-table-id='rawDataTable' data-column-index=1>
-						<i class='fa fa-chevron-circle-down'></i>Incidents
-                    </th>
-                </tr>
-            </thead>
-            <tbody><!-- Data will go here... --></tbody>
-        </table>
+    <!--- Inverse Per Capita Table ---->
+    <table id='perCapitaTable'>
+        <thead>
+            <tr class='tableHeader'>
+                <th colspan='2'>Population / Incident Ratios</th>
+            </tr>
+            <tr class='columnHeader'>
+                <th data-table-id='perCapitaTable' data-column-index=0>
+                    <i class='fa fa-chevron-circle-down'></i>State
+                </th>
+                <th data-table-id='perCapitaTable' data-column-index=1 class='hint--top' data-hint="The numbers below indicate the number of people it takes in a state (on average) before one of those people submits an incident report to NUFORC. These numbers should give you a better idea of the true frequency of incidents in a state relative to that state's population.">
+                    <i class='fa fa-chevron-circle-down'></i>
+                    Ratio
+                    <i class='fa fa-question-circle'></i>
+                </th>
+            </tr>
+        </thead>
+        <tbody><!-- Data will go here... --></tbody>
+    </table>
 
-		<!--- Inverse Per Capita Table ---->
-		<table id='perCapitaTable'>
-		    <thead>
-                <tr class='tableHeader'>
-                    <th colspan='2'>Incident / Population Ratios</th>
-                </tr>
-                <tr class='columnHeader'>
-					<th data-table-id='perCapitaTable' data-column-index=0>
-						<i class='fa fa-chevron-circle-down'></i>State
-					</th>
-                    <th data-table-id='perCapitaTable' data-column-index=1 class='hint--top' data-hint="The numbers below indicate the number of people it takes in a state (on average) before one of those people submits an incident report to NUFORC. These numbers should give you a better idea of the true frequency of incidents in a state relative to that state's population.">
-						<i class='fa fa-chevron-circle-down'></i>
-                        Ratio
-                        <i class='fa fa-question-circle'></i>
-                    </th>
-                </tr>
-            </thead>
-			<tbody><!-- Data will go here... --></tbody>
-		</table>
+	<!--- Interactive Map of the United States --->
 
-    </div>
-</form>
+    <div class='separator'></div>
+
+	<div id='mapDiagramSubtext'>The map of the United States below illustrates the frequency of reported UFO incidents relative to a state's population. The darker a state appears on the map, the more often UFO incidents are reported there on a per-capita basis. </div>
+	<div id='desktopStateDataContainer'>Hover over a state to view UFO incidence data about that particular state.</div>
+	<div id='mapDiagramContainer'><!-- SVG data will go here... --></div>
+	<div id='mobileStateDataContainer'>Tap on a state and you will see UFO incidence data about that state in this box here.</div>
+
+</div>
