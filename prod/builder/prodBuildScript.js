@@ -24,9 +24,11 @@ var JSPM_PACKAGES_DIR = 'jspm_packages/',
 	CLIENT_SCRIPTS_ROOT_DIR = 'client/scripts/',
 	PROD_DIR = 'prod/',
 	PROD_BUILDER_DIR = 'builder/',
+	PLUGINS_DIR = 'client/scripts/plugins/',
 
 	MAIN_FILE_KEYWORD = 'main',
 	PROD_BUILD_SCRIPT_NAME = 'prodBuild',
+	APP_DESTINATION_SCRIPT_NAME = 'app',
 
 	JAVASCRIPT_EXTENSION = '.js',
 	SHELL_SCRIPT_EXTENSION = '.sh',
@@ -34,9 +36,8 @@ var JSPM_PACKAGES_DIR = 'jspm_packages/',
 
 	JSPM_PROGRAM_NAME = 'jspm',
 	UGLIFY_JS_PROGRAM_NAME = 'uglifyjs',
-	COMPILATION_COMMAND_NAME = 'bundle',
+	COMPILATION_COMMAND_NAME = 'bundle-sfx',
 	REMOVE_COMMAND = 'rm -rf',
-	INJECT_KEYWORD = '--inject',
 	MANGLE_KEYWORD = '--mangle',
 	OUTPUT_KEYWORD = '--output';
 
@@ -52,10 +53,12 @@ _Q.spawn(function* ()
 	var allFiles = yield fileManager.fetchAllFilePaths(CLIENT_SCRIPTS_ROOT_DIR),
 		appScriptFiles = [],
 		buildScript = '',
-		filePath, pathCrumbs, prodPath,
+		destinationFile = PROD_DIR + APP_DESTINATION_SCRIPT_NAME + JAVASCRIPT_EXTENSION,
+		filePath,
 		i;
 
-	// Only collect files that are application-specific scripts defined as main entry scripts
+	// Only collect files that are application-specific scripts defined either as main entry scripts
+	// or plugin scripts
 	for (i = allFiles.length - 1; i >= 0; i--)
 	{
 		filePath = allFiles[i].path;
@@ -66,24 +69,39 @@ _Q.spawn(function* ()
 		{
 			appScriptFiles.push(filePath);
 		}
+		else if ( (filePath.endsWith(JAVASCRIPT_EXTENSION)) &&
+	   			  (filePath.indexOf(JSPM_PACKAGES_DIR) === -1) &&
+				  (filePath.indexOf(PLUGINS_DIR) > -1) )
+		{
+			appScriptFiles.push(filePath);
+		}
 	}
 
 	// Start writing out the build script
+	buildScript += JSPM_PROGRAM_NAME + ' ' + COMPILATION_COMMAND_NAME;
+
+	// All entry and plugin scripts need to bundled (together with their dependencies) into one file
 	for (i = appScriptFiles.length - 1; i >= 0; i--)
 	{
 		filePath = appScriptFiles[i];
-		pathCrumbs = filePath.split('/');
-		prodPath = (PROD_DIR + pathCrumbs[pathCrumbs.length - 2] + JAVASCRIPT_EXTENSION);
 
-		// Write out the command to basically plug all scripts needed on any particular page into one file
-		buildScript += JSPM_PROGRAM_NAME + ' ' + COMPILATION_COMMAND_NAME + ' ' + filePath.replace(JAVASCRIPT_EXTENSION, '') +
-			' ' + prodPath + ' ' + INJECT_KEYWORD;
-
-		buildScript += '\n';
-
-		// Now write out the command to minify that compact file
-		buildScript += UGLIFY_JS_PROGRAM_NAME + ' ' + prodPath + ' ' + MANGLE_KEYWORD + ' ' + OUTPUT_KEYWORD + ' ' + prodPath;
+		if (i === appScriptFiles.length - 1)
+		{
+			buildScript += ' ' + filePath.replace(JAVASCRIPT_EXTENSION, '');
+		}
+		else
+		{
+			buildScript += ' + ' + filePath.replace(JAVASCRIPT_EXTENSION, '');
+		}
 	}
+
+	// Write out the name of the destination scripts that will serve as the main application script in production
+	buildScript += ' ' + destinationFile;
+
+	buildScript += '\n';
+
+	// Now write out the command to minify that compact file
+	buildScript += UGLIFY_JS_PROGRAM_NAME + ' ' +  destinationFile + ' ' + MANGLE_KEYWORD + ' ' + OUTPUT_KEYWORD + ' ' + destinationFile;
 
 	// Append the command to remove map files that would be generated from the jspm bundler
 	buildScript += '\n' + REMOVE_COMMAND + ' ' + PROD_DIR + '*' + MAP_EXTENSION;

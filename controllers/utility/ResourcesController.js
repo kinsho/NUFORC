@@ -16,7 +16,9 @@ var SCSS_EXTENSION = '.scss',
 	SCSS_INCLUDE_PATHS =
 	[
 		'client/styles/foundation/'
-	];
+	],
+
+	COMPRESSED_KEYWORD = 'compressed';
 
 // ----------------- PRIVATE VARIABLES --------------------------
 
@@ -56,7 +58,8 @@ module.exports =
 				fileContents = _sass.renderSync(
 				{
 					data: fileContents,
-					includePaths: SCSS_INCLUDE_PATHS
+					includePaths: SCSS_INCLUDE_PATHS,
+					outputStyle: COMPRESSED_KEYWORD
 				}).css;
 
 			}

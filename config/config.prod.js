@@ -16,7 +16,6 @@ var config =
 	// Environment
 	IS_DEV: false,
 	IS_PROD: true
-
 };
 
 // ----------------- EXPORT ---------------------------

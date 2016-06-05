@@ -30,7 +30,10 @@ var BEGINNING_YEAR_INPUT = 'beginningYearSelector',
 	MAP_DIAGRAM_CONTAINER = 'mapDiagramContainer',
 
 	VISIBILITY_CLASS = 'show',
-	ROW_ODD_CLASS = 'tableRowOdd';
+	ROW_ODD_CLASS = 'tableRowOdd',
+
+	MOBILE_MAP_DIRECTIONS = 'Tap on a state and you will see UFO incidence data about that state in this box here.',
+	MOBILE_MAP_DIRECTIONS_CONTAINER = 'mobileStateDataContainer';
 
 // ----------------- PRIVATE FUNCTIONS -----------------------------
 
@@ -183,6 +186,16 @@ function _removeNodeFromDOM(elementID)
 	}
 }
 
+/**
+ * Function responsible for resetting the directions in the mobile tap square underneath the map of the URL_SUFFIX
+ *
+ * @author kinsho
+ */
+function _resetMobileMapDirections()
+{
+	document.getElementById(MOBILE_MAP_DIRECTIONS_CONTAINER).innerHTML = MOBILE_MAP_DIRECTIONS;
+}
+
 // ----------------- VIEW MODEL DEFINITION -----------------------------
 
 var viewModel = {};
@@ -333,6 +346,7 @@ Object.defineProperty(viewModel, 'showResultsContainer',
 		else
 		{
 			_removeNodeFromDOM(MAP_DIAGRAM_CONTAINER);
+			_resetMobileMapDirections();
 		}
 	}
 });

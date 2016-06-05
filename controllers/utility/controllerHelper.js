@@ -19,7 +19,9 @@ var BASE_TEMPLATE_FILE = 'base',
 	HBARS_BOOTSTRAPPED_DATA = 'initialData',
 	HBARS_LAUNCH_SCRIPT = 'launchScript',
 	HBARS_MAIN_SCRIPT_NAME = 'main',
-	HBARS_PATH_TO_SCRIPT = 'client/scripts/';
+	HBARS_IS_PROD_FLAG = 'isProd',
+	HBARS_PATH_TO_SCRIPT = 'client/scripts/',
+	HBARS_CURRENT_YEAR = 'currentYear';
 
 // ----------------- MODULE DEFINITION --------------------------
 module.exports =
@@ -51,6 +53,12 @@ module.exports =
 		// Other assets specific to the page being loaded
 		data[HBARS_STYLESHEET_FILES] = yield fileManager.fetchStylesheets(directory);
 		data[HBARS_LAUNCH_SCRIPT] = HBARS_PATH_TO_SCRIPT + directory + '/' + HBARS_MAIN_SCRIPT_NAME;
+
+		// Determine if this code is executing in production
+		data[HBARS_IS_PROD_FLAG] = config.IS_PROD;
+
+		// Load the current year into the view as well for copyright purposes
+		data[HBARS_CURRENT_YEAR] = new Date().getFullYear();
 
 		return yield templateManager.populateTemplate(data, '', BASE_TEMPLATE_FILE);
 	})

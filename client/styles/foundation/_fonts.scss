@@ -113,10 +113,21 @@ $FONTS:
 	@include basicFontSettings($size: map-get($FONTS, regularPlusFontSize));
 }
 
+%footerText
+{
+	@include basicFontSettings($size: map-get($FONTS, largeFontSize), $family: Palatino Linotype, $color: map-get($COLORS, whiteTheme));
+	letter-spacing: 0.2em;
+
+	@media only screen and (max-device-width: 727px)
+	{
+		@include basicFontSettings($size: map-get($FONTS, mobileRegularFontSize), $family: Palatino Linotype, $color: map-get($COLORS, whiteTheme));
+		letter-spacing: 0.1em;
+	}
+}
+
 %loaderText
 {
 	@include basicFontSettings($weight: 700, $size: map-get($FONTS, giganticFontSize), $family: Helvetica, $color: map-get($COLORS, darkBlueTheme));
-
 
 	@media only screen and (max-device-width: 727px)
 	{

@@ -13,8 +13,8 @@ var config =
 	DATABASE_URL: 'mongodb://kinsho:NUFORC@localhost:27017/NUFORC',
 
 	// Environment
-	IS_DEV: true,
-	IS_PROD: false
+	IS_DEV: false,
+	IS_PROD: true
 };
 
 // ----------------- EXPORT ---------------------------
